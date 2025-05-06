@@ -11,7 +11,7 @@ from rich.text import Text
 from rich.prompt import Prompt
 from rich.theme import Theme
 from rich import print as rprint
-import tweepy
+from pytwitter import Api
 
 custom_theme = Theme({
     "info": "cyan",
@@ -128,18 +128,24 @@ def create_post(state: State):
     tweet_content = state["ai_response"]
 
     try:
-        client = tweepy.Client(
+        # Initialize the Twitter API with OAuth 1.0a User Context
+        api = Api(
             consumer_key=TWITTER_API_KEY,
             consumer_secret=TWITTER_API_SECRET,
             access_token=TWITTER_ACCESS_TOKEN,
-            access_token_secret=TWITTER_ACCESS_SECRET
+            access_secret=TWITTER_ACCESS_SECRET
         )
-
-        response = client.create_tweet(text=tweet_content)
-
+        
+        # Post the tweet
+        response = api.create_tweet(text=tweet_content)
+        
+        # The response structure is different from what we expected
+        # Let's print it properly based on the actual structure
+        tweet_id = getattr(response, 'id', 'Unknown')
+        
         console.print()
         console.print(Panel(
-            Text("✅ POST PUBLISHED SUCCESSFULLY TO TWITTER (v2 API)! ✅", style="success"),
+            Text(f"✅ POST PUBLISHED SUCCESSFULLY TO TWITTER (v2 API)! ✅\nTweet ID: {tweet_id}", style="success"),
             border_style="green",
             title="Tweet Sent"
         ))
