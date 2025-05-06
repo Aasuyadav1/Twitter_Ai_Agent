@@ -8,9 +8,14 @@
 .venv
 **/.venv
 .venv/
+venv
+venv/
 **/.venv/
 
 # Python cache files
 __pycache__/
 *.py[cod]
 *$py.class
+venv/
+.venv/
+venv

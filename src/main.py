@@ -11,6 +11,7 @@ from rich.text import Text
 from rich.prompt import Prompt
 from rich.theme import Theme
 from rich import print as rprint
+import tweepy
 
 custom_theme = Theme({
     "info": "cyan",
@@ -23,6 +24,11 @@ custom_theme = Theme({
 console = Console(theme=custom_theme)
 
 load_dotenv()
+
+TWITTER_API_KEY = os.getenv("TWITTER_API_KEY")
+TWITTER_API_SECRET = os.getenv("TWITTER_API_SECRET")
+TWITTER_ACCESS_TOKEN = os.getenv("TWITTER_ACCESS_TOKEN")
+TWITTER_ACCESS_SECRET = os.getenv("TWITTER_ACCESS_SECRET")
 
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.0-flash",
@@ -119,17 +125,37 @@ def route_edge(state: State) -> Literal["create_post", "feedback_on_post"]:
         return "feedback_on_post"
 
 def create_post(state: State):
-    console.print()
-    console.print(Panel(
-        Text("✅ POST PUBLISHED SUCCESSFULLY! ✅", style="success"),
-        border_style="green",
-        title="Success"
-    ))
-    console.print(Panel.fit(
-        state["ai_response"],
-        border_style="green",
-        padding=(1, 2)
-    ))
+    tweet_content = state["ai_response"]
+
+    try:
+        client = tweepy.Client(
+            consumer_key=TWITTER_API_KEY,
+            consumer_secret=TWITTER_API_SECRET,
+            access_token=TWITTER_ACCESS_TOKEN,
+            access_token_secret=TWITTER_ACCESS_SECRET
+        )
+
+        response = client.create_tweet(text=tweet_content)
+
+        console.print()
+        console.print(Panel(
+            Text("✅ POST PUBLISHED SUCCESSFULLY TO TWITTER (v2 API)! ✅", style="success"),
+            border_style="green",
+            title="Tweet Sent"
+        ))
+        console.print(Panel.fit(
+            tweet_content,
+            border_style="green",
+            padding=(1, 2)
+        ))
+
+    except Exception as e:
+        console.print(Panel(
+            f"[danger]Failed to publish tweet: {e}[/danger]",
+            border_style="red",
+            title="Error"
+        ))
+
     return state
 
 def feedback_on_post(state: State):
