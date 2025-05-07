@@ -2,6 +2,8 @@
 
 A powerful CLI application that uses AI to generate and publish engaging Twitter posts.
 
+![Twitter AI Agent](public/twitter_agent.png)
+
 ## Description
 
 Twitter AI Agent is a Python-based tool that leverages the Gemini AI model to create compelling Twitter posts based on user input. The application allows users to:
