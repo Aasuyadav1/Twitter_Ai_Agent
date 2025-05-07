@@ -1,7 +1,5 @@
 # Twitter AI Agent
 
-A powerful CLI application that uses AI to generate and publish engaging Twitter posts.
-
 ![Twitter AI Agent](public/twitter_agent.png)
 
 ## Description
